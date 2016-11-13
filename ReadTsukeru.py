@@ -71,6 +71,6 @@ if __name__ == '__main__':
     device.read()
     print("RSSI:"+str(device.humidity)+"dB")
     print("Temperature:"+str(device.temperature)+"C")
-    print("Humidity:"+str(device.humidity)+"%%")
+    print("Humidity:"+str(device.humidity)+"%")
 
     
