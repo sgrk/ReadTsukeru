@@ -6,6 +6,7 @@ class Tsukeru:
     temperature = 0
     humidity = 0
     rssi = 0
+    isExist = False
     
     def __init__(self,address="00:00:00:00:00:00"):
         #macアドレス設定 小文字に変換
@@ -49,11 +50,13 @@ class Tsukeru:
         scanner = Scanner().withDelegate(DefaultDelegate())
         temp_flg  = False
         humid_flg = False
-        
-        while not (temp_flg and humid_flg):
+        self.isExist =False
+        retry_count = 3;
+        while not (temp_flg and humid_flg) and retry_count > 0:
             devices = scanner.scan(7.0)
             for dev in devices:
                 if dev.addr == self.address:
+                    self.isExist = True
                     self.rssi = dev.rssi
                     (adtype, desc, value) = dev.getScanData()[2]
                     data = value[12:]
@@ -63,13 +66,15 @@ class Tsukeru:
                     elif data[0] == "2" and humid_flg == False:
                         humid_flg = True
                         self.humidity = self.readHumidity(data)
-                        
+            if not self.isExist:
+                retry_count -= 1
+                           
         
 if __name__ == '__main__':
     #set your device's address
     device = Tsukeru("xx:xx:xx:xx:xx:xx")
     device.read()
-    print("RSSI:"+str(device.humidity)+"dB")
+    print("RSSI:"+str(device.rssi)+"dB")
     print("Temperature:"+str(device.temperature)+"C")
     print("Humidity:"+str(device.humidity)+"%")
 
